@@ -1,3 +1,3 @@
 # clj-json-logger
-![](/docs/curly-braces.png =100px)
+<img src="./docs/curly-braces.png" width="100")
 A pure Clojure structured application logger
