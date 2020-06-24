@@ -16,10 +16,6 @@
    :error 40
    :fatal 50})
 
-(defmacro unless
-  [test & branches]
-  (conj (reverse branches) test 'if))
-
 (defn current-epoch-time []
   (.getTime (java.util.Date.)))
 
@@ -34,15 +30,15 @@
        to-json
        write-to-stdout))
 
-(defn log [lvl msg & [kv err]]
+(defn log [lvl msg & {:keys [kv err]}]
   (write-log (into {}
                    [[:message msg]
                     [:level lvl]
                     [:timestamp (current-epoch-time)]
-                    (unless err
-                            [:error      (.toString err)
-                             :stacktrace (.getStackTrace err)])
-                    (unless kv [:json kv])])))
+                    (when err
+                      {:error      (.toString err)
+                       :stacktrace (str/join "\n" (.getStackTrace err))})
+                    (when kv [:json kv])])))
 
 (defmacro debug [msg & args] `(log :debug ~msg ~@args))
 (defmacro info  [msg & args] `(log :info  ~msg ~@args))
