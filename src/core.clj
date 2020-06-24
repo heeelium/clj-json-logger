@@ -34,15 +34,18 @@
        to-json
        write-to-stdout))
 
-(defn log [lvl msg & [kv]]
+(defn log [lvl msg & [kv err]]
   (write-log (into {}
-                   [[:msg msg]
-                   [:lvl lvl]
-                   [:ts (current-epoch-time)]
-                   (unless kv [:kv kv])])))
+                   [[:message msg]
+                    [:level lvl]
+                    [:timestamp (current-epoch-time)]
+                    (unless err
+                            [:error      (.toString err)
+                             :stacktrace (.getStackTrace err)])
+                    (unless kv [:json kv])])))
 
-(defmacro debug [msg & kv] `(log :debug ~msg ~@kv))
-(defmacro info [msg & kv] `(log :info ~msg ~@kv))
-(defmacro warn [msg & kv] `(log :warn ~msg ~@kv))
-(defmacro error [msg & kv] `(log :error ~msg ~@kv))
-(defmacro fatal  [msg & kv] `(log :fatal ~msg ~@kv))
+(defmacro debug [msg & args] `(log :debug ~msg ~@args))
+(defmacro info  [msg & args] `(log :info  ~msg ~@args))
+(defmacro warn  [msg & args] `(log :warn  ~msg ~@args))
+(defmacro error [msg & args] `(log :error ~msg ~@args))
+(defmacro fatal [msg & args] `(log :fatal ~msg ~@args))
