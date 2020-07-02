@@ -8,7 +8,7 @@
   {:level  :debug ; one of [:debug, :info, :warn, :error, :fatal]
    :stdout true   ; log to stdout by default
    :file   nil    ; path to file if logging to file, nil means stdout only
-   :pretty true  ; whether or not we want to pretty print logs (useful for dev)
+   :pretty false  ; whether or not we want to pretty print logs (useful for dev)
    })
 
 (def level-mapping
@@ -18,28 +18,30 @@
    :error 40
    :fatal 50})
 
-(defn current-epoch-time []
+(defn- current-epoch-time []
   (.getTime (java.util.Date.)))
 
-(defn pretty-formatter [log]
-  ;; (apply str [(pprint/cl-format nil "level=~a namespace=~a message=\"~a\""
-  ;;                               (name (log :level))
-  ;;                               (log :namespace)
-  ;;                               (log :message))
-  ;;             (doseq [[k v] (log :kv)]
-  ;;               (pprint/cl-format nil " ~a=~a " k v))]))
-  ;; TODO: figure out why this doseq is returning a nil
-  (pprint/cl-format nil"level=~a namespace=~a message=\"~a\""
-                    (name (log :level))
-                    (log :namespace)
-                    (log :message)))
+(defn- convert-if-keyword [key]
+  (if (keyword key)
+    (name key)
+    key))
 
-(defn convert-to-string [log]
+(defn- pretty-formatter [log]
+  (apply str [(pprint/cl-format true "level=~a namespace=~a message=\"~a\""
+                                (name (log :level))
+                                (log :namespace)
+                                (log :message))
+              (doseq [[k v] (log :kv)]
+                (pprint/cl-format true " ~a=~a"
+                                  (convert-if-keyword k)
+                                  (convert-if-keyword v)))]))
+
+(defn- convert-to-string [log]
   (if (config :pretty)
     (pretty-formatter log)
     (json/write-str log)))
 
-(defn write-to-stdout [log]
+(defn- write-to-stdout [log]
   (.write *out* (str log "\n")))
 
 (defn- write-log [log]
