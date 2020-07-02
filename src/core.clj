@@ -18,9 +18,6 @@
    :error 40
    :fatal 50})
 
-(defn- current-epoch-time []
-  (.getTime (java.util.Date.)))
-
 (defn- convert-if-keyword [key]
   (if (keyword key)
     (name key)
@@ -35,6 +32,9 @@
                 (pprint/cl-format true " ~a=~a"
                                   (convert-if-keyword k)
                                   (convert-if-keyword v)))]))
+
+(defn- current-epoch-time []
+  (.getTime (java.util.Date.)))
 
 (defn- convert-to-string [log]
   (if (config :pretty)
