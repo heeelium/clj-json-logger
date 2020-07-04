@@ -31,7 +31,7 @@ nil
 
 ## TODO
 
-- [] Use a buffered output writer for writing the log
-- [] Add a file writer
-- [] Write some basic tests
-- [] Look into wrapping any underlying java logging to format that as well?
+- [ ] Use a buffered output writer for writing the log
+- [ ] Add a file writer
+- [ ] Write some basic tests
+- [ ] Look into wrapping any underlying java logging to format that as well?
