@@ -1,22 +1,50 @@
 (ns clj-json-logger.core
   (:import java.util.Date)
-  (:require [clojure.string :as str]
-            [clojure.data.json :as json]
-            [clojure.pprint :as pprint]))
+  (:require [clojure.data.json :as json]
+            [clojure.java.io :as io]
+            [clojure.pprint :as pprint]
+            [clojure.string :as str]))
 
-(def config
-  {:level  :debug ; one of [:debug, :info, :warn, :error, :fatal]
-   :stdout true   ; log to stdout by default
-   :file   nil    ; path to file if logging to file, nil means stdout only
-   :pretty false  ; whether or not we want to pretty print logs (useful for dev)
-   })
-
-(def level-mapping
+(def- level-mapping
   {:debug 10
    :info  20
    :warn  30
    :error 40
    :fatal 50})
+
+;; Dynamic configuration options
+
+(def ^:dynamic *pretty* false)
+(defn toggle-pretty-print []
+  (alter-var-root #'*pretty* (constantly true)))
+
+(def ^:dynamic *stdout* true)
+(defn disable-stdout []
+  (alter-var-root #'*stdout* (constantly false)))
+
+(def ^:dynamic *level* :debug)
+(defn set-log-level [level]
+  (let [levels #{:debug :info :warn :error :fatal}]
+    (if (contains? levels level)
+      (alter-var-root #'*level* (constantly level))
+      (throw (Exception. "incorrect log level")))))
+
+(def ^:dynamic *file*)
+(defn set-file [filename]
+  (do
+    (unless (.exists (io/file filename)) (create-file filename))
+    (alter-var-root #'*file* (constantly filename))))
+
+;; Library API exposed to the user
+
+(defmacro debug [message & args] `(log :debug ~message ~@args))
+(defmacro info  [message & args] `(log :info  ~message ~@args))
+(defmacro warn  [message & args] `(log :warn  ~message ~@args))
+(defmacro error [message & args] `(log :error ~message ~@args))
+(defmacro fatal [message & args] `(log :fatal ~message ~@args))
+
+(def- create-file [filename]
+  (print "foo"))
 
 (defn- convert-if-keyword [key]
   (if (keyword key)
@@ -37,7 +65,7 @@
   (.getTime (java.util.Date.)))
 
 (defn- convert-to-string [log]
-  (if (config :pretty)
+  (if *pretty*
     (pretty-formatter log)
     (json/write-str log)))
 
@@ -45,7 +73,7 @@
   (.write *out* (str log "\n")))
 
 (defn- write-log [log]
-  (when (config :stdout)
+  (when *stdout*
     (->> log
          convert-to-string
          write-to-stdout)))
@@ -54,16 +82,10 @@
   (write-log (into {}
                    [[:message message]
                     [:level level]
-                    [:namespace (str *ns*)]
+                    [:namespace (ns-name *ns*)]
                     [:level_number (level-mapping level)]
                     [:timestamp (current-epoch-time)]
                     (when error
                       {:error      (.toString error)
                        :stacktrace (str/join "\n" (.getStackTrace error))})
                     (when kv [:kv kv])])))
-
-(defmacro debug [message & args] `(log :debug ~message ~@args))
-(defmacro info  [message & args] `(log :info  ~message ~@args))
-(defmacro warn  [message & args] `(log :warn  ~message ~@args))
-(defmacro error [message & args] `(log :error ~message ~@args))
-(defmacro fatal [message & args] `(log :fatal ~message ~@args))
