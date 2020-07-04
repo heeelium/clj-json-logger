@@ -1,9 +1,9 @@
 (ns clj-json-logger.core
   (:import java.util.Date)
   (:require [clojure.data.json :as json]
-            [clojure.java.io :as io]
-            [clojure.pprint :as pprint]
-            [clojure.string :as str]))
+            [clojure.java.io   :as io]
+            [clojure.pprint    :as pprint]
+            [clojure.string    :as str]))
 
 (def- level-mapping
   {:debug 10
@@ -47,7 +47,7 @@
   (print "foo"))
 
 (defn- convert-if-keyword [key]
-  (if (keyword key)
+  (if (keyword? key)
     (name key)
     key))
 
