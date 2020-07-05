@@ -15,6 +15,8 @@ user> (log/disable-stdout)                       ; don't log to stdout
 
 ## Usage
 
+A basic info log:
+
 ``` clojure
 user> (use '[magnolia.core :as log])
 user> (log/info "info log")
