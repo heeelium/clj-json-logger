@@ -1,13 +1,13 @@
-# clj-json-logger <img src="./docs/curly-braces.png" height="25">
+# Magnolia
 
-A pure Clojure structured application logger
+A pure Clojure structured application logger.
 
 ## Usage
 
 Basic usage:
 
 ``` clojure
-user> (use '[clj-json-logger.core :as log])
+user> (use '[magnolia.core :as log])
 user> (log/info "info log")
 {"message":"info log","level":"info","timestamp":1592967099025}
 nil
@@ -32,6 +32,6 @@ nil
 ## TODO
 
 - [ ] Use a buffered output writer for writing the log
-- [ ] Add a file writer
+- [ ] Add a file appender
 - [ ] Write some basic tests
 - [ ] Look into wrapping any underlying java logging to format that as well?

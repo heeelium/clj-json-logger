@@ -1,4 +1,4 @@
-(ns clj-json-logger.core
+(ns magnolia.core
   (:import java.util.Date)
   (:require [clojure.data.json :as json]
             [clojure.java.io   :as io]
@@ -69,6 +69,9 @@
     (pretty-formatter log)
     (json/write-str log)))
 
+(defn- stacktrace-to-string [error]
+  (str/join "\n" (.getStackTrace error)))
+
 (defn- write-to-stdout [log]
   (.write *out* (str log "\n")))
 
@@ -80,12 +83,12 @@
 
 (defn log [level message & {:keys [kv error]}]
   (write-log (into {}
-                   [[:message message]
-                    [:level level]
-                    [:namespace (ns-name *ns*)]
+                   [[:message      message]
+                    [:level        level]
+                    [:namespace    (ns-name *ns*)]
                     [:level_number (level-mapping level)]
-                    [:timestamp (current-epoch-time)]
+                    [:timestamp    (current-epoch-time)]
                     (when error
                       {:error      (.toString error)
-                       :stacktrace (str/join "\n" (.getStackTrace error))})
+                       :stacktrace (stacktrace-to-string error)})
                     (when kv [:kv kv])])))
