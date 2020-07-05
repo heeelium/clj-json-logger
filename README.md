@@ -2,18 +2,18 @@
 
 A pure Clojure structured application logger.
 
-## Usage
+## Configuration
 
 **Magnolia** uses pretty sane defaults that should be sufficient to get started, but if you want to change them, global initialization can be done using the helper methods exposed to the user. For example, **magnolia** logs to `stdout` by default and you might want to change that to log to a file.
 
 ``` clojure
 user> (use '[magnolia.core :as log]')
-user> (log/toggle-pretty-print)  ; will log strings nicer to grok than json
+user> (log/toggle-pretty-print)                  ; will log strings nicer to grok than json
 user> (log/set-file "/var/log/clojure-app.log")  ; log to file
-user> (log/disable-stdout)  ; don't log to stdout
+user> (log/disable-stdout)                       ; don't log to stdout
 ```
 
-Basic usage:
+## Usage
 
 ``` clojure
 user> (use '[magnolia.core :as log])
@@ -40,6 +40,7 @@ nil
 
 ## TODO
 
+- [ ] Configurable log level output
 - [ ] Use a buffered output writer for writing the log
 - [ ] Add a file appender
 - [ ] Write some basic tests
