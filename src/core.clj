@@ -29,11 +29,15 @@
       (alter-var-root #'*level* (constantly level))
       (throw (Exception. "incorrect log level")))))
 
-(def ^:dynamic *file*)
+(defn- create-file [filename]
+  ;; obvious todo: implement this :D
+  (print "foo"))
+
+(def ^:dynamic *filename*)
 (defn set-file [filename]
   (do
-    (unless (.exists (io/file filename)) (create-file filename))
-    (alter-var-root #'*file* (constantly filename))))
+    (when-not (.exists (io/file filename)) (create-file filename))
+    (alter-var-root #'*filename* (constantly filename))))
 
 ;; Library API exposed to the user
 
@@ -42,9 +46,6 @@
 (defmacro warn  [message & args] `(log :warn  ~message ~@args))
 (defmacro error [message & args] `(log :error ~message ~@args))
 (defmacro fatal [message & args] `(log :fatal ~message ~@args))
-
-(def- create-file [filename]
-  (print "foo"))
 
 (defn- convert-if-keyword [key]
   (if (keyword? key)
