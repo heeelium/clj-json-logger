@@ -13,7 +13,7 @@ All available configuration options:
 (magnolia.core/toggle-pretty-print)
 
 ;; Disable logging to stdout, useful if logging only to files in production environments.
-(magnolia.core/disable-stdout)
+(magnolia.core/toggle-stdout)
 
 ;; Set the minimum log level for log statements, this in inclusive so :debug is the most permissive, :warn will only log warnings and higher (see level-mapping).
 (magnolia.core/set-log-level :debug)
