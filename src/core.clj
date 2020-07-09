@@ -5,7 +5,7 @@
             [clojure.pprint    :as pprint]
             [clojure.string    :as str]))
 
-(def- level-mapping
+(def level-mapping
   {:debug 10
    :info  20
    :warn  30
