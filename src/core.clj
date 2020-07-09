@@ -16,21 +16,22 @@
 
 (def ^:dynamic *pretty* false)
 (defn toggle-pretty-print []
-  (alter-var-root #'*pretty* (constantly true)))
+  (alter-var-root #'*pretty* (constantly (not *pretty*))))
 
 (def ^:dynamic *stdout* true)
-(defn disable-stdout []
-  (alter-var-root #'*stdout* (constantly false)))
+(defn toggle-stdout []
+  (alter-var-root #'*stdout* (constantly (not *stdout*))))
 
 (def ^:dynamic *level* :debug)
 (defn set-log-level [level]
   (let [levels #{:debug :info :warn :error :fatal}]
     (if (contains? levels level)
       (alter-var-root #'*level* (constantly level))
-      (throw (Exception. "incorrect log level")))))
+      (throw (Exception. "invalid log level")))))
 
 (defn- create-file [filename]
-  ;; obvious todo: implement this :D
+  ;; TODO: create file if it doesn't exist already and any parent
+  ;;       directories in the path
   (print "foo"))
 
 (def ^:dynamic *filename*)
@@ -57,6 +58,9 @@
                                 (name (log :level))
                                 (log :namespace)
                                 (log :message))
+              (when (log :error)
+                (let [error (log :error)]
+                (pprint/cl-format true " error=\"~a\"" (.toString error))))
               (doseq [[k v] (log :kv)]
                 (pprint/cl-format true " ~a=~a"
                                   (convert-if-keyword k)
@@ -74,13 +78,23 @@
   (str/join "\n" (.getStackTrace error)))
 
 (defn- write-to-stdout [log]
+  ;; TODO: use a buffered writer to stdout instead
   (.write *out* (str log "\n")))
 
+(defn- write-to-file [log]
+  ;; TODO: implement a file appender
+  (print "foo"))
+
 (defn- write-log [log]
-  (when *stdout*
-    (->> log
-         convert-to-string
-         write-to-stdout)))
+  (do
+    (when *stdout*
+      (->> log
+           convert-to-string
+           write-to-stdout))
+    (when *filename*
+      (->> log
+           convert-to-string
+           write-to-file))))
 
 (defn log [level message & {:keys [kv error]}]
   (write-log (into {}
