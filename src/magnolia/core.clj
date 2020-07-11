@@ -42,26 +42,26 @@
 
 ;; Library API exposed to the user
 
-(defmacro debug [message & args] `(log-implementation :debug ~message ~@args))
-(defmacro info  [message & args] `(log-implementation :info  ~message ~@args))
-(defmacro warn  [message & args] `(log-implementation :warn  ~message ~@args))
-(defmacro error [message & args] `(log-implementation :error ~message ~@args))
-(defmacro fatal [message & args] `(log-implementation :fatal ~message ~@args))
+(defmacro debug [message & args] `(log :debug ~message ~@args))
+(defmacro info  [message & args] `(log :info  ~message ~@args))
+(defmacro warn  [message & args] `(log :warn  ~message ~@args))
+(defmacro error [message & args] `(log :error ~message ~@args))
+(defmacro fatal [message & args] `(log :fatal ~message ~@args))
 
 (defn- convert-if-keyword [key]
   (if (keyword? key)
     (name key)
     key))
 
-(defn- pretty-formatter [log]
+(defn- pretty-formatter [log-data]
   (str/join [(pprint/cl-format true "level=~a namespace=~a message=\"~a\""
-                               (name (log :level))
-                               (log :namespace)
-                               (log :message))
-             (when (log :error)
-               (let [error (log :error)]
+                               (name (log-data :level))
+                               (log-data :namespace)
+                               (log-data :message))
+             (when (log-data :error)
+               (let [error (log-data :error)]
                  (pprint/cl-format true " error=\"~a\"" (str error))))
-             (doseq [[k v] (log :kv)]
+             (doseq [[k v] (log-data :kv)]
                (pprint/cl-format true " ~a=~a"
                                  (convert-if-keyword k)
                                  (convert-if-keyword v)))]))
@@ -96,7 +96,7 @@
            convert-to-string
            write-to-file))))
 
-(defn log-implementation [level message & {:keys [kv error]}]
+(defn log [level message & {:keys [kv error]}]
   (write-log (into {}
                    [[:message      message]
                     [:level        level]
