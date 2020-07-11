@@ -42,11 +42,11 @@
 
 ;; Library API exposed to the user
 
-(defmacro debug [message & args] `(log :debug ~message ~@args))
-(defmacro info  [message & args] `(log :info  ~message ~@args))
-(defmacro warn  [message & args] `(log :warn  ~message ~@args))
-(defmacro error [message & args] `(log :error ~message ~@args))
-(defmacro fatal [message & args] `(log :fatal ~message ~@args))
+(defmacro debug [message & args] `(log-implementation :debug ~message ~@args))
+(defmacro info  [message & args] `(log-implementation :info  ~message ~@args))
+(defmacro warn  [message & args] `(log-implementation :warn  ~message ~@args))
+(defmacro error [message & args] `(log-implementation :error ~message ~@args))
+(defmacro fatal [message & args] `(log-implementation :fatal ~message ~@args))
 
 (defn- convert-if-keyword [key]
   (if (keyword? key)
@@ -96,7 +96,7 @@
            convert-to-string
            write-to-file))))
 
-(defn log [level message & {:keys [kv error]}]
+(defn log-implementation [level message & {:keys [kv error]}]
   (write-log (into {}
                    [[:message      message]
                     [:level        level]
@@ -104,6 +104,6 @@
                     [:level_number (level-mapping level)]
                     [:timestamp    (current-epoch-time)]
                     (when error
-                      {:error      (.toString error)
+                      {:error      (str error)
                        :stacktrace (stacktrace-to-string error)})
                     (when kv [:kv kv])])))
