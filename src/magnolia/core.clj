@@ -44,10 +44,12 @@
       (alter-var-root #'*level* (constantly level))
       (throw (Exception. "invalid log level")))))
 
-(defn- create-file [filename]
+(defn- create-file
+  "Create a file at the given location."
+  [filename]
   ;; TODO: create file if it doesn't exist already and any parent
   ;;       directories in the path
-  (print "foo"))
+  nil)
 
 (def ^:dynamic *filename*)
 (defn set-file
@@ -121,7 +123,7 @@
   "Appends log line to the file explicitly set with set-file."
   [log]
   ;; TODO: implement a file appender
-  (print "foo"))
+  nil)
 
 (defn- write-log
   "Internal function mostly for readability, takes a log, converts it to a
