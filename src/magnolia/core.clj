@@ -58,9 +58,8 @@
   directories in the path.
   Usage: (set-file '/path/to/filename')"
   [filename]
-  (do
-    (when-not (.exists (io/file filename)) (create-file filename))
-    (alter-var-root #'*filename* (constantly filename))))
+  (when-not (.exists (io/file filename)) (create-file filename))
+  (alter-var-root #'*filename* (constantly filename)))
 
 ;; Library API exposed to the user
 
@@ -129,15 +128,14 @@
   "Internal function mostly for readability, takes a log, converts it to a
   string, and then writes it to the enabled targets (stdout, file, or both)."
   [log]
-  (do
-    (when *stdout*
-      (->> log
-           convert-to-string
-           write-to-stdout))
-    (when *filename*
-      (->> log
-           convert-to-string
-           write-to-file))))
+  ((when *stdout*
+     (->> log
+          convert-to-string
+          write-to-stdout))
+   (when *filename*
+     (->> log
+          convert-to-string
+          write-to-file))))
 
 (defn log
   "Low level implementation for the logger, usage is wrapped by the macros
