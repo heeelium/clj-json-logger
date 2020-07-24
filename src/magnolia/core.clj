@@ -80,15 +80,15 @@
 (defn- pretty-formatter
   "Given the log, this function will convert it into a somewhat human readable
   format, enabled with (toggle-pretty-print)."
-  [log-data]
+  [log]
   (str/join [(pprint/cl-format true "level=~a namespace=~a message=\"~a\""
-                               (name (log-data :level))
-                               (log-data :namespace)
-                               (log-data :message))
-             (when (log-data :error)
-               (let [error (log-data :error)]
+                               (name (log :level))
+                               (log :namespace)
+                               (log :message))
+             (when (log :error)
+               (let [error (log :error)]
                  (pprint/cl-format true " error=\"~a\"" (str error))))
-             (doseq [[k v] (log-data :kv)]
+             (doseq [[k v] (log :kv)]
                (pprint/cl-format true " ~a=~a"
                                  (convert-if-keyword k)
                                  (convert-if-keyword v)))]))
