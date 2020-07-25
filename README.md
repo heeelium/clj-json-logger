@@ -1,6 +1,6 @@
 # Magnolia
 
-A pure Clojure structured application logger.
+A pure Clojure structured (JSON) application logger.
 
 ## Configuration
 
