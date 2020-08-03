@@ -126,6 +126,7 @@
   "Internal function mostly for readability, takes a log, converts it to a
   string, and then writes it to the enabled targets (stdout, file, or both)."
   [log]
+  (when >= (log :level_number) *level*)
   ((when *stdout*
      (->> log
           convert-to-string
