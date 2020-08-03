@@ -126,15 +126,15 @@
   "Internal function mostly for readability, takes a log, converts it to a
   string, and then writes it to the enabled targets (stdout, file, or both)."
   [log]
-  (when >= (log :level_number) *level*)
-  ((when *stdout*
-     (->> log
-          convert-to-string
-          write-to-stdout))
-   (when *filename*
-     (->> log
-          convert-to-string
-          write-to-file))))
+  (when (>= (log :level_number) *level*)
+    (when *stdout*
+      (->> log
+           convert-to-string
+           write-to-stdout))
+    (when *filename*
+      (->> log
+           convert-to-string
+           write-to-file))))
 
 (defn log
   "Low level implementation for the logger, usage is wrapped by the macros
