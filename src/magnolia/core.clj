@@ -1,9 +1,9 @@
 (ns magnolia.core
   (:require [clojure.data.json :as json]
-            [clojure.java.io   :as io]
-            [clojure.pprint    :as pprint]
-            [clojure.string    :as str]
-            [tick.alpha.api    :as t]))
+            [clojure.java.io :as io]
+            [clojure.pprint :as pprint]
+            [clojure.string :as str]
+            [tick.alpha.api :as t]))
 
 (def level-mapping
   "Mapping from log level to a numeric representation, useful for analyzing
@@ -47,9 +47,7 @@
 (defn- create-file
   "Create a file at the given location."
   [filename]
-  ;; TODO: create file if it doesn't exist already and any parent
-  ;;       directories in the path
-  nil)
+  (spit filename nil))
 
 (def ^:dynamic *filename*)
 (defn set-file
@@ -121,8 +119,8 @@
 (defn- write-to-file
   "Appends log line to the file explicitly set with set-file."
   [log]
-  ;; TODO: implement a file appender
-  nil)
+  ;; TODO: implement a buffered writer to file instead
+  (.write *filename* (str log "\n")))
 
 (defn- write-log
   "Internal function mostly for readability, takes a log, converts it to a
