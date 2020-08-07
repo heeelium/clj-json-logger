@@ -58,7 +58,7 @@ nil
 
 ## TODO
 
-- [ ] Configurable log level output
+- [x] Configurable log level output
 - [ ] Use a buffered output writer for writing the log
 - [ ] Add a file appender
 - [ ] Write some basic tests
