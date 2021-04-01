@@ -56,6 +56,10 @@ user> (log/error "oh no!" :error (Exception. "wut"))
 nil
 ```
 
+## License
+
+MPL-2.0, See [LICENSE](LICENSE).
+
 ## TODO
 
 - [x] Configurable log level output
