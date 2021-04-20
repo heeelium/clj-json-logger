@@ -1,5 +1,7 @@
 # Magnolia
 
+<img alt="GitHub" src="https://img.shields.io/github/license/rgrmrts/magnolia">
+
 🪓 A pure Clojure structured (JSON) application logger.
 
 ## Configuration
